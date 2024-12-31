@@ -11,6 +11,11 @@ services:
       - "5432:5432"
     networks:
       - kong-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kong"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   kong-migration:
     image: kong:latest
@@ -23,7 +28,8 @@ services:
     networks:
       - kong-net
     depends_on:
-      - kong-database
+      kong-database:
+        condition: service_healthy
 
   kong:
     image: kong:latest
@@ -45,8 +51,11 @@ services:
     networks:
       - kong-net
     depends_on:
-      - kong-database
-      - kong-migration
+      kong-database:
+        condition: service_healthy
+      kong-migration:
+        condition: service_completed_successfully
+    restart: unless-stopped
 
   db:
     image: mysql:latest
@@ -57,11 +66,18 @@ services:
       - "3393:3306"
     networks:
       - kong-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p123456"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
 
   app:
     build: .
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       DB_HOST: db
       DB_PORT: 3306
@@ -71,7 +87,8 @@ services:
     networks:
       - kong-net
     deploy:
-      replicas: 1 
+      replicas: 1
+    restart: unless-stopped
 
 networks:
   kong-net:
