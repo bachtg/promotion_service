@@ -7,6 +7,12 @@ option go_package = "promotion_service.api";
 import "third_party/google/api/annotations.proto";
 
 service LoyaltyService {
+    rpc HealthCheck (Empty) returns (Empty) {
+        option (google.api.http) = {
+            get: "/api/v1/health-check"
+        };
+    }
+
     rpc GetListEvents (GetListEventsRequest) returns (GetListEventsResponse) {
         option (google.api.http) = {
             get: "/api/v1/events"
@@ -114,3 +120,5 @@ message RedeemVouchersResponse {
     string message = 2 [json_name = "message"];
     repeated Voucher data = 3 [json_name = "data"];
 }
+
+message Empty {}

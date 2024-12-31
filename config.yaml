@@ -4,8 +4,8 @@ server:
   httpport: "8080"
 
 database:
-  host: "db"
+  host: "mysql.railway.internal"
   port: "3306"
   user: "root"
-  password: "123456"
-  name: "loyalty_service"
+  password: "hJRbNsFArVSEWqHvIpjPXAQGMipWGGcn"
+  name: "railway"

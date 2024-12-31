@@ -33,6 +33,24 @@ var _ = utilities.NewDoubleArray
 var _ = descriptor.ForMessage
 var _ = metadata.Join
 
+func request_LoyaltyService_HealthCheck_0(ctx context.Context, marshaler runtime.Marshaler, client LoyaltyServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq Empty
+	var metadata runtime.ServerMetadata
+
+	msg, err := client.HealthCheck(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+func local_request_LoyaltyService_HealthCheck_0(ctx context.Context, marshaler runtime.Marshaler, server LoyaltyServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq Empty
+	var metadata runtime.ServerMetadata
+
+	msg, err := server.HealthCheck(ctx, &protoReq)
+	return msg, metadata, err
+
+}
+
 var (
 	filter_LoyaltyService_GetListEvents_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 )
@@ -177,6 +195,29 @@ func local_request_LoyaltyService_RedeemVoucher_0(ctx context.Context, marshaler
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterLoyaltyServiceHandlerFromEndpoint instead.
 func RegisterLoyaltyServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server LoyaltyServiceServer) error {
 
+	mux.Handle("GET", pattern_LoyaltyService_HealthCheck_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_LoyaltyService_HealthCheck_0(rctx, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_LoyaltyService_HealthCheck_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
 	mux.Handle("GET", pattern_LoyaltyService_GetListEvents_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -310,6 +351,26 @@ func RegisterLoyaltyServiceHandler(ctx context.Context, mux *runtime.ServeMux, c
 // "LoyaltyServiceClient" to call the correct interceptors.
 func RegisterLoyaltyServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client LoyaltyServiceClient) error {
 
+	mux.Handle("GET", pattern_LoyaltyService_HealthCheck_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_LoyaltyService_HealthCheck_0(rctx, inboundMarshaler, client, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_LoyaltyService_HealthCheck_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
 	mux.Handle("GET", pattern_LoyaltyService_GetListEvents_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -394,6 +455,8 @@ func RegisterLoyaltyServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 }
 
 var (
+	pattern_LoyaltyService_HealthCheck_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"api", "v1", "health-check"}, "", runtime.AssumeColonVerbOpt(true)))
+
 	pattern_LoyaltyService_GetListEvents_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"api", "v1", "events"}, "", runtime.AssumeColonVerbOpt(true)))
 
 	pattern_LoyaltyService_CreateEvent_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"api", "v1", "events"}, "", runtime.AssumeColonVerbOpt(true)))
@@ -404,6 +467,8 @@ var (
 )
 
 var (
+	forward_LoyaltyService_HealthCheck_0 = runtime.ForwardResponseMessage
+
 	forward_LoyaltyService_GetListEvents_0 = runtime.ForwardResponseMessage
 
 	forward_LoyaltyService_CreateEvent_0 = runtime.ForwardResponseMessage
