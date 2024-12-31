@@ -1,0 +1,16 @@
+_format_version: "1.1"
+services:
+  - name: promotion_service
+    url: http://app:8080
+    routes:
+      - name: promotion_service_route
+        paths:
+          - /
+        protocols:
+          - http
+plugins:
+  - name: rate-limiting
+    service: promotion_service
+    config:
+      minute: 100
+      hour: 1000
